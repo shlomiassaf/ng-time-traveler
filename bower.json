@@ -1,0 +1,15 @@
+{
+  "name": "ng-time-traveler",
+  "description": "Define angular 1 recipes using angular 2 annotation syntax.",
+  "version": "0.0.0",
+  "homepage": "",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-route": "~1.4.0",
+    "angular-loader": "~1.4.0",
+    "angular-mocks": "~1.4.0",
+    "html5-boilerplate": "~5.2.0"
+  }
+}

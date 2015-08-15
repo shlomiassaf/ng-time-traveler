@@ -1,0 +1,22 @@
+{
+  "version": "1.5.3",
+  "compilerOptions": {
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "noLib": false
+  },
+  "fileGlobs": [
+    "./modules/**/*.ts",
+    "./tools/**/*.ts",
+    "!./node_modules/**",
+    "!./modules_dart/**",
+    "!./packages/**",
+    "!./dist/**",
+    "!./temp/**"
+  ]
+}
