@@ -15,14 +15,32 @@ import { View, Component } from "../../src/ngtt";
 export let ViewMore = class {
     constructor() {
         this.restrict = 'EA';
+        this.controllerAs = "ctrl123";
+        this.controller = viewMoreController;
+        this.scope = {
+            name: '=name'
+        };
+        this.bindToController = true;
     }
+    //compile() {
+    //    return {
+    //        post: function() {}
+    //    };
+    //}
     link(scope, iElement, iAttrs, controller) {
         scope.name = "Shlomi";
     }
 };
+ViewMore.$inject = [];
 ViewMore = __decorate([
     Component({
         selector: 'viewMore',
+        host: {
+            '(event)': 'event',
+            '[prop]': 'prop',
+            '@action': 'Action()',
+            'attr': 'AttrVal'
+        },
         _ngtt: {
             ngApp: "myApp"
         }
@@ -32,4 +50,8 @@ ViewMore = __decorate([
     }), 
     __metadata('design:paramtypes', [])
 ], ViewMore);
+function viewMoreController($scope) {
+    this.hasScope = ($scope) ? true : false;
+}
+viewMoreController.$inject = ['$scope'];
 //# sourceMappingURL=directiveWithView.js.map

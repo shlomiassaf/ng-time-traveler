@@ -1,7 +1,8 @@
 
 /* SEE: https://github.com/angular/angular/blob/master/modules/angular2/src/core/annotations_impl/annotations.ts */
 
-import {ABSTRACT, CONST, Type} from '../../facade/lang';
+import {ABSTRACT, CONST, Type, global, StringMap} from '../../facade/lang';
+
 
 /**
  * Interface for ngRoute metadata annotation extension.
@@ -9,8 +10,8 @@ import {ABSTRACT, CONST, Type} from '../../facade/lang';
  */
 export interface INgRouteMeta {
     path: string,
-    controllerAs?: string,
-    resolve?: {[key: string]: any}
+    resolve?: {[key: string]: any},
+    controllerAs?: string
 }
 
 /**
@@ -19,7 +20,7 @@ export interface INgRouteMeta {
  */
 export interface INgttAnnotationMeta {
     ngApp?: string;
-    ngRoute?: INgRouteMeta
+    ngRoute?: INgRouteMeta;
 }
 
 export class NgttAnnotation {
@@ -33,24 +34,29 @@ export class NgttAnnotation {
 @CONST()
 export class Directive extends NgttAnnotation{
     selector: string;
+    host: StringMap<string, string>;
 
-    constructor({selector, _ngtt}: {
+    constructor({selector, host, _ngtt}: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta,
     } = {}) {
         super(_ngtt);
         this.selector = selector;
+        this.host = host;
     }
 }
 
 @CONST()
 export class Component extends Directive {
-    constructor({selector, _ngtt}: {
+    constructor({selector, host, _ngtt}: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta,
     } = {}) {
         super({
             selector: selector,
+            host: host,
             _ngtt: _ngtt
         });
     }

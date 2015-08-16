@@ -23,7 +23,6 @@ export function stringify(token) {
     var newLineIndex = res.indexOf("\n");
     return (newLineIndex === -1) ? res : res.substring(0, newLineIndex);
 }
-/* NOT IN GITHUB REPO */
 /**
  * Returns the class name of an instance, or the class name if the type (constructor function) is provided.
  * @param clsOrObj

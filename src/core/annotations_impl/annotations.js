@@ -17,9 +17,10 @@ export class NgttAnnotation {
     }
 }
 export let Directive = class extends NgttAnnotation {
-    constructor({ selector, _ngtt } = {}) {
+    constructor({ selector, host, _ngtt } = {}) {
         super(_ngtt);
         this.selector = selector;
+        this.host = host;
     }
 };
 Directive = __decorate([
@@ -27,9 +28,10 @@ Directive = __decorate([
     __metadata('design:paramtypes', [Object])
 ], Directive);
 export let Component = class extends Directive {
-    constructor({ selector, _ngtt } = {}) {
+    constructor({ selector, host, _ngtt } = {}) {
         super({
             selector: selector,
+            host: host,
             _ngtt: _ngtt
         });
     }

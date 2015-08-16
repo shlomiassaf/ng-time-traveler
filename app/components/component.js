@@ -14,8 +14,10 @@ import { View, Component } from "../../src/ngtt";
 export let SomeCtrl = class {
     constructor() {
         this.name = "Shlomi";
+        this.nameTwo = "Shira";
     }
 };
+SomeCtrl.$inject = [];
 SomeCtrl = __decorate([
     Component({
         selector: '',
@@ -28,7 +30,7 @@ SomeCtrl = __decorate([
         }
     }),
     View({
-        template: "<h1>Hello {{ctrl.name}}</h1><view-more></view-more>"
+        template: "<h1>Hello {{ctrl.name}}</h1><view-more name='ctrl.name'></view-more><view-more name='ctrl.nameTwo'></view-more>"
     }), 
     __metadata('design:paramtypes', [])
 ], SomeCtrl);

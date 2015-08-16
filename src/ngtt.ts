@@ -21,7 +21,7 @@ export var config = _config;
 
 
 import {registerAdapter, AngularLegacyViewType} from './ng/adapterManager';
-import {ControllerAdapter, DirectiveAdapter, NgRouteAdapter} from './ng/adapters';
+import {ControllerAdapter, DirectiveAdapter, NgRouteAdapter} from './ng/adapters/adapters';
 
 registerAdapter(ControllerAdapter, AngularLegacyViewType.Controller);
 registerAdapter(DirectiveAdapter, AngularLegacyViewType.Directive);

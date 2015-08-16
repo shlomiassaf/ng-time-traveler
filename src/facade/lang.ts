@@ -36,6 +36,9 @@ export  function stringify(token): string {
 
 
 /* NOT IN GITHUB REPO */
+export interface StringMap<T extends string, Z> {
+    [index: string]: Z;
+}
 
 /**
  * Returns the class name of an instance, or the class name if the type (constructor function) is provided.

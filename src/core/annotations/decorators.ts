@@ -5,7 +5,7 @@
 import {ViewAnnotation} from './view';
 import {DirectiveAnnotation, ComponentAnnotation, INgttAnnotationMeta} from './annotations';
 import {makeDecorator, makeParamDecorator, TypeDecorator, Class} from '../../util/decorators';
-import {Type} from '../../facade/lang';
+import {Type, StringMap} from '../../facade/lang';
 import {StringFunc} from '../../ng/typings';
 
 export interface DirectiveDecorator  extends TypeDecorator {}
@@ -39,10 +39,12 @@ export interface ViewDecorator extends TypeDecorator {
 export interface DirectiveFactory {
     (obj: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta
     }): DirectiveDecorator;
     new (obj: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta
     }): DirectiveAnnotation;
 }
@@ -50,10 +52,12 @@ export interface DirectiveFactory {
 export interface ComponentFactory {
     (obj: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta
     }): DirectiveDecorator;
     new (obj: {
         selector?: string,
+        host?: StringMap<string, string>,
         _ngtt?: INgttAnnotationMeta
     }): DirectiveAnnotation;
 }
