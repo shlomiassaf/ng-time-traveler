@@ -1,4 +1,5 @@
 /// <reference path="../../../typings/tsd.d.ts" />
+import { getTypeName } from "../../facade/lang";
 import { BaseAdapter } from "./base";
 export var LinkingInstructionType;
 (function (LinkingInstructionType) {
@@ -63,8 +64,7 @@ function identifyLinkingFn(linkObj) {
 }
 function linkFnWrapperFactory(originalLinkFn, beforeLink) {
     return function () {
-        beforeLink.apply(this, arguments);
-        return originalLinkFn.apply(this, arguments);
+        return originalLinkFn.apply(this, beforeLink.apply(this, arguments));
     }.bind(this);
 }
 /**
@@ -99,54 +99,20 @@ function compileWrapperFactory(originalCompileFn, beforeLink) {
         return linkWrapperFactory.call(this, linkObj, beforeLink);
     }.bind(this);
 }
+/**
+ * Adapter to angular 1 directives.
+ * Wrapping a directive is done in several steps:
+ * 1) Calling _directiveFactoryFactory() to create a directive recipe function and handling $inject.
+ * 2) Calling _constructDirective() to create a DirectiveInstance & its Proxy.
+ */
 export class DirectiveAdapter extends BaseAdapter {
-    _populateHostMeta(host) {
-        this.hostMeta = {
-            events: {},
-            properties: {},
-            attributes: {},
-            actions: {}
-        };
-        if (host) {
-            for (var k in host) {
-                var hostType = getHostType(k);
-                switch (hostType) {
-                    case HostItemType.action:
-                        this.hostMeta.actions[k.substr(1)] = host[k];
-                        break;
-                    case HostItemType.property:
-                        this.hostMeta.properties[k.substr(1, k.length - 2)] = host[k];
-                        break;
-                    case HostItemType.event:
-                        this.hostMeta.events[k.substr(1, k.length - 2)] = host[k];
-                        break;
-                    case HostItemType.attribute:
-                        this.hostMeta.attributes[k] = host[k];
-                        break;
-                }
-            }
-        }
-    }
     register() {
         if (this.inst.component) {
-            this._populateHostMeta(this.inst.component.host);
             this._registerView(this.inst.component, this.inst.view);
         }
         else if (this.inst.directive) {
-            this._populateHostMeta(this.inst.directive.host);
             this._registerNoView(this.inst.directive);
         }
-    }
-    _beforeLink(scope, iElement, iAttrs, controller, transclude) {
-        // The actual place when are on an instance level of a directive.
-        // All other places instances of a directive type.
-        // Here we have virtual constructor to an instance of a directive.
-        // the context ("this") is the a "Component" instance, the only instance of Component for this directive as a type.
-        var self = this;
-        for (var k in self.$$ngtt.adapter.hostMeta.events) {
-        }
-        //console.log(this);
-        //console.log(controller);
     }
     /**
      * A Directive constructor emulator.
@@ -161,32 +127,26 @@ export class DirectiveAdapter extends BaseAdapter {
      * @private
      */
     _constructDirective(args) {
-        function Component(adapter, args) {
-            adapter.inst.cls.apply(this, args);
-            this.$$ngtt = {
-                adapter: adapter
-            };
-            if (angular.isFunction(this.controller)) {
-                let ctrl = this.controller;
-                this.controller = function () {
-                    return ctrl.apply(this, arguments);
-                };
-                this.controller.$inject = ctrl.$inject;
-            }
-            // we want to control the linking function to support 'host' features in ng2
-            // for this we need to wrap the "link" function or link.pre\post function
-            if (angular.isFunction(this.compile)) {
-                // compile returns a LinkFn so we will wait for it, grab & wrap.
-                this.compile = compileWrapperFactory.call(this, this.compile, adapter._beforeLink);
-            }
-            else {
-                // direct wrap.
-                this.link = linkWrapperFactory.call(this, this.link, adapter._beforeLink);
-            }
+        function extend(type, base) {
+            function __() { this.constructor = type; }
+            __.prototype = base.prototype;
+            type.prototype = new __();
         }
-        Component.prototype = this.inst.cls.prototype;
-        return new Component(this, args);
+        // we cant extend DirectiveInstance directly since it will be used for many directives, instead we wrap it with a proxy.
+        function DirectiveInstanceProxy(adapter, args) {
+            DirectiveInstance.apply(this, [adapter, args]);
+        }
+        extend(DirectiveInstanceProxy, this.inst.cls);
+        for (var k in DirectiveInstance.prototype) {
+            DirectiveInstanceProxy.prototype[k] = DirectiveInstance.prototype[k];
+        }
+        return new DirectiveInstanceProxy(this, args); // typeof is DirectiveAdapter
     }
+    /**
+     * A Directive wrapper that
+     * @returns {ng.IDirectiveFactory}
+     * @private
+     */
     _directiveFactoryFactory() {
         var factory = function (...args) {
             return this._constructDirective(args);
@@ -205,6 +165,156 @@ export class DirectiveAdapter extends BaseAdapter {
             this.inst.cls.prototype.templateUrl = view.templateUrl;
         }
         this.inst.ngModule.directive(cmpt.selector, this._directiveFactoryFactory());
+    }
+}
+DirectiveAdapter.CORE_DIRECTIVE_EVENTS = 'click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouseleave keydown keyup keypress submit focus blur copy cut paste'.split(' ');
+DirectiveAdapter.CORE_DIRECTIVE_EVENTS_FORCE_ASYNC = {
+    'blur': true,
+    'focus': true
+};
+/**
+ * A directive DDO owner, manipulates the user directive according to needs.
+ * There is one DirectiveInstance per Directive type (DDO).
+ */
+class DirectiveInstance {
+    constructor(adapter, args) {
+        this.adapter = adapter;
+        this.annotation = this.adapter.inst.directive || this.adapter.inst.component;
+        adapter.inst.cls.apply(this, args);
+        this.isControllerExists = angular.isFunction(this.controller);
+        this.hostMeta = {
+            events: {},
+            coreEvents: {},
+            properties: {},
+            attributes: {},
+            actions: {}
+        };
+        this.host = {
+            events: undefined,
+            coreEvents: undefined,
+            properties: undefined,
+            attributes: undefined,
+            actions: undefined
+        };
+        this.parseAnnotations();
+        var $injector = angular.injector(['ng']);
+        var $parse = $injector.get('$parse');
+        this.$rootScope = $injector.get('$rootScope');
+        this.host.coreEvents = [];
+        for (var k in this.hostMeta.coreEvents) {
+            this.host.coreEvents.push({
+                eventName: k,
+                fn: $parse(this.hostMeta.coreEvents[k], null, true)
+            });
+        }
+        this.host.events = [];
+        for (var k in this.hostMeta.events) {
+            this.host.events.push({
+                eventName: k,
+                fn: $parse(this.hostMeta.events[k], null, true)
+            });
+        }
+        if (this.isControllerExists) {
+            let ctrl = this.controller;
+            this.controller = function () {
+                return ctrl.apply(this, arguments);
+            };
+            this.controller.$inject = ctrl.$inject;
+            // Force require so the controller in linkFn will always be an array with index 0 as the controller.
+            if (angular.isArray(this.require)) {
+                this.require.unshift(this.annotation.selector);
+            }
+            else if (this.require) {
+                this.require = [this.annotation.selector, this.require];
+            }
+            else {
+                this.require = [this.annotation.selector];
+            }
+        }
+        // we want to control the linking function to support 'host' features in ng2
+        // for this we need to wrap the "link" function or link.pre\post function
+        if (angular.isFunction(this.compile)) {
+            // compile returns a LinkFn so we will wait for it, grab & wrap.
+            this.compile = compileWrapperFactory.call(this, this.compile, this.beforeLink);
+        }
+        else {
+            this.link = linkWrapperFactory.call(this, this.link, this.beforeLink);
+        }
+    }
+    populateHostMeta(host) {
+        if (host) {
+            for (var k in host) {
+                var hostType = getHostType(k);
+                switch (hostType) {
+                    case HostItemType.action:
+                        this.hostMeta.actions[k.substr(1)] = host[k];
+                        break;
+                    case HostItemType.property:
+                        this.hostMeta.properties[k.substr(1, k.length - 2)] = host[k];
+                        break;
+                    case HostItemType.event:
+                        var eName = k.substr(1, k.length - 2);
+                        if (DirectiveAdapter.CORE_DIRECTIVE_EVENTS.indexOf(eName)) {
+                            this.hostMeta.coreEvents[eName] = host[k];
+                        }
+                        else {
+                            this.hostMeta.events[eName] = host[k];
+                        }
+                        break;
+                    case HostItemType.attribute:
+                        this.hostMeta.attributes[k] = host[k];
+                        break;
+                }
+            }
+        }
+    }
+    /**
+     * Invoked before link is invoked (or link returned from a compile block)
+     * This is a virtual place where a directive defines new instances of itself... (via scope/controller)
+     * Must return an array of injectables sent to the original link.
+     * @returns {string[]}
+     */
+    beforeLink(scope, iElement, iAttrs, controller, transclude) {
+        var ctx = (this.isControllerExists) ? controller[0] : scope; // if we have a ctrl require is an array for sure.
+        for (var v of this.host.coreEvents) {
+            iElement.on(v.eventName, function (event) {
+                var callback = function () {
+                    v.fn(ctx, { $event: event });
+                };
+                if (DirectiveAdapter.CORE_DIRECTIVE_EVENTS_FORCE_ASYNC[v.eventName] && this.$rootScope.$$phase) {
+                    scope.$evalAsync(callback);
+                }
+                else {
+                    scope.$apply(callback);
+                }
+            });
+        }
+        for (var v of this.host.events) {
+            iElement.on(v.eventName, function (event) {
+                var callback = function () {
+                    v.fn(ctx, { $event: event }); // TODO: this is not good...
+                };
+                scope.$apply(callback);
+            });
+        }
+        // remove the first controller if we forced it by adding it the require list...
+        if (this.isControllerExists) {
+            if (controller.length === 1)
+                controller = controller[0];
+            else {
+                controller.splice(0, 1);
+            }
+        }
+        var ret = [scope, iElement, iAttrs];
+        controller && ret.push(controller);
+        transclude && ret.push(transclude);
+        return ret;
+    }
+    parseAnnotations() {
+        this.populateHostMeta(this.annotation.host);
+        if (this.isControllerExists && !this.controllerAs) {
+            this.controllerAs = getTypeName(this.adapter.inst.cls);
+        }
     }
 }
 //# sourceMappingURL=directive.js.map

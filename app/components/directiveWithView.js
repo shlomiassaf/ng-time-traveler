@@ -29,6 +29,9 @@ export let ViewMore = class {
     //}
     link(scope, iElement, iAttrs, controller) {
         scope.name = "Shlomi";
+        scope.onClick = function ($event) {
+            alert('okS');
+        };
     }
 };
 ViewMore.$inject = [];
@@ -36,7 +39,7 @@ ViewMore = __decorate([
     Component({
         selector: 'viewMore',
         host: {
-            '(event)': 'event',
+            '(mouseenter)': 'onClick($event)',
             '[prop]': 'prop',
             '@action': 'Action()',
             'attr': 'AttrVal'
@@ -46,12 +49,15 @@ ViewMore = __decorate([
         }
     }),
     View({
-        template: "<h1>Hello Directive{{name}}</h1>"
+        template: "<span>Hello Directive{{name}}</span>"
     }), 
     __metadata('design:paramtypes', [])
 ], ViewMore);
 function viewMoreController($scope) {
     this.hasScope = ($scope) ? true : false;
+    this.onClick = function ($event) {
+        alert('ok');
+    };
 }
 viewMoreController.$inject = ['$scope'];
 //# sourceMappingURL=directiveWithView.js.map
