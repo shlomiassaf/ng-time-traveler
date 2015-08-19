@@ -39,10 +39,10 @@ ViewMore = __decorate([
     Component({
         selector: 'viewMore',
         host: {
-            '(mouseenter)': 'onClick($event)',
+            '(click)': 'onClick($event)',
             '[prop]': 'prop',
             '@action': 'Action()',
-            'attr': 'AttrVal'
+            'myAttributeNice': 'AttrVal'
         },
         _ngtt: {
             ngApp: "myApp"

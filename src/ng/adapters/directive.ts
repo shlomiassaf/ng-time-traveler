@@ -1,10 +1,9 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 
 import {IAdapter, RegisterInstruction} from "../adapterManager";
-import {getTypeName, StringMap} from "../../facade/lang";
+import {getTypeName, StringMap, camelToDash} from "../../facade/lang";
 import {BaseAdapter} from "./base";
-import {Directive, Component} from '../../core/annotations_impl/annotations';
-import {View} from '../../core/annotations_impl/view';
+import {DirectiveMetadata, ComponentMetadata, ViewMetadata} from '../../core/metadata';
 
 export enum LinkingInstructionType {
     fn = 1,
@@ -187,11 +186,11 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
         return factory;
     }
 
-    private _registerNoView(cmpt: Directive) {
+    private _registerNoView(cmpt: DirectiveMetadata) {
         this.inst.ngModule.directive(cmpt.selector, this._directiveFactoryFactory());
     }
 
-    private _registerView(cmpt: Component, view: View) {
+    private _registerView(cmpt: ComponentMetadata, view: ViewMetadata) {
 
         if (view.template) {
             this.inst.cls.prototype.template = view.template;
@@ -205,11 +204,11 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
 }
 
 interface IHostMetadata {
-    events: StringMap<string, string> | any[],
-    coreEvents: StringMap<string, string> | any[],
-    properties: StringMap<string, string> | any[],
-    attributes: StringMap<string, string> | any[],
-    actions: StringMap<string, string> | any[]
+    events?: StringMap<string, string> | any[],
+    coreEvents?: StringMap<string, string> | any[],
+    properties?: StringMap<string, string> | any[],
+    attributes?: StringMap<string, string> | any[],
+    actions?: StringMap<string, string> | any[]
 }
 /**
  * A directive DDO owner, manipulates the user directive according to needs.
@@ -219,7 +218,7 @@ class DirectiveInstance implements ng.IDirective{
     public $rootScope: ng.IRootScopeService;
 
     public adapter: DirectiveAdapter;
-    public annotation: Component | Directive;
+    public annotation: ComponentMetadata | DirectiveMetadata;
 
     public hostMeta: IHostMetadata;
     public host: IHostMetadata;
@@ -256,6 +255,13 @@ class DirectiveInstance implements ng.IDirective{
         }
     }
 
+    private updateHostAttributes(element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
+        for (var attrName in this.hostMeta.attributes) {
+            if (! attrs.hasOwnProperty(attrName) ) {
+                element.attr(camelToDash(attrName), this.hostMeta.attributes[attrName]);
+            }
+        }
+    }
     /**
      * Invoked before link is invoked (or link returned from a compile block)
      * This is a virtual place where a directive defines new instances of itself... (via scope/controller)
@@ -289,6 +295,8 @@ class DirectiveInstance implements ng.IDirective{
                 scope.$apply(callback);
             });
         }
+
+        this.updateHostAttributes(iElement, iAttrs);
 
         // remove the first controller if we forced it by adding it the require list...
         if (this.isControllerExists) {
@@ -328,7 +336,6 @@ class DirectiveInstance implements ng.IDirective{
             events: undefined,
             coreEvents: undefined,
             properties: undefined,
-            attributes: undefined,
             actions: undefined
         };
 

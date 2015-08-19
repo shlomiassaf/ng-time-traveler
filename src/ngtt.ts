@@ -4,10 +4,13 @@ import {init} from './ngDecorator';
 import * as _config from './ng/config';
 
 export {
+    ComponentMetadata,
+    DirectiveMetadata,
+    ViewMetadata,
     Component,
     Directive,
     View
-} from './core/annotations/decorators';
+} from './core/metadata';
 
 export {
     Class,

@@ -1,7 +1,6 @@
 /// <reference path="../../typings/tsd.d.ts" />
 import {hasModule, INewAngularModuleNotifier, notifyOnNewModule} from '../ngDecorator';
-import {Directive, Component, INgttAnnotationMeta} from '../core/annotations_impl/annotations';
-import {View} from '../core/annotations_impl/view';
+import {DirectiveMetadata, ComponentMetadata, ViewMetadata, INgttAnnotationMeta} from '../core/metadata';
 import * as config from '../ng/config';
 import {getTypeName} from "../facade/lang";
 
@@ -15,9 +14,9 @@ var adapters:IAdapterDictionary = {};
  * Types of annotations angular2 provides.
  */
 export enum AnnotationType {
-    Directive = 1,
-    Component = 2,
-    View = 4
+    DirectiveMetadata = 1,
+    ComponentMetadata = 2,
+    ViewMetadata = 4
 }
 
 /**
@@ -115,7 +114,7 @@ export class RegisterInstruction {
                 map = AngularLegacyViewType.Directive;
                 break;
             case 6: {
-                var cmpAnnotation: Component = findAnnotation(this.annotations, AnnotationType[2]);
+                var cmpAnnotation: ComponentMetadata = findAnnotation(this.annotations, AnnotationType[2]);
                 map = (cmpAnnotation && cmpAnnotation.selector && typeof cmpAnnotation.selector === "string") ?
                     AngularLegacyViewType.Directive : AngularLegacyViewType.Controller;
 
@@ -140,9 +139,9 @@ export class RegisterInstruction {
         return this._cache.legacyViewType;
     }
 
-    get directive(): Directive {
+    get directive(): DirectiveMetadata {
         if (!this._cache.hasOwnProperty('Directive')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.Directive]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.DirectiveMetadata]);
             if (value) {
                 this._cache.Directive = value;
             }
@@ -153,9 +152,9 @@ export class RegisterInstruction {
         return this._cache.Directive;
     }
 
-    get component(): Component {
+    get component(): ComponentMetadata {
         if (!this._cache.hasOwnProperty('Component')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.Component]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.ComponentMetadata]);
             if (value) {
                 this._cache.Component = value;
             }
@@ -166,9 +165,9 @@ export class RegisterInstruction {
         return this._cache.Component;
     }
 
-    get view(): View {
+    get view(): ViewMetadata {
         if (!this._cache.hasOwnProperty('View')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.View]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.ViewMetadata]);
             if (value) {
                 this._cache.View = value;
             }

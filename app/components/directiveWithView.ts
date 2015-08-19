@@ -6,10 +6,10 @@ import {View, Component, Directive, config} from "../../src/ngtt";
 @Component({
     selector: 'viewMore',
     host: {
-        '(mouseenter)': 'onClick($event)',
+        '(click)': 'onClick($event)',
         '[prop]': 'prop',
         '@action': 'Action()',
-        'attr': 'AttrVal'
+        'myAttributeNice': 'AttrVal'
     },
     _ngtt: {
         ngApp: "myApp"

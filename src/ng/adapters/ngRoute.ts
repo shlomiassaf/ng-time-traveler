@@ -3,8 +3,7 @@
 import {IAdapter, RegisterInstruction} from "../adapterManager";
 import {getTypeName} from "../../facade/lang";
 import {BaseAdapter} from "./base";
-import {Directive} from '../../core/annotations_impl/annotations';
-import {View} from '../../core/annotations_impl/view';
+import {DirectiveMetadata, ViewMetadata} from '../../core/metadata';
 
 interface PathRoute {
     path: string;
@@ -34,8 +33,8 @@ export class NgRouteAdapter extends BaseAdapter implements IAdapter{
     }
 
     register() {
-        let ctrl: Directive = this.inst.component || this.inst.directive;
-        let view: View = this.inst.view;
+        let ctrl: DirectiveMetadata = this.inst.component || this.inst.directive;
+        let view: ViewMetadata = this.inst.view;
 
         if (ctrl._ngtt && ctrl._ngtt.ngRoute && ctrl._ngtt.ngRoute.path) {
             let route: ng.route.IRoute = {};

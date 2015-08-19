@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/tsd.d.ts" />
-import { getTypeName } from "../../facade/lang";
+import { getTypeName, camelToDash } from "../../facade/lang";
 import { BaseAdapter } from "./base";
 export var LinkingInstructionType;
 (function (LinkingInstructionType) {
@@ -193,7 +193,6 @@ class DirectiveInstance {
             events: undefined,
             coreEvents: undefined,
             properties: undefined,
-            attributes: undefined,
             actions: undefined
         };
         this.parseAnnotations();
@@ -268,6 +267,13 @@ class DirectiveInstance {
             }
         }
     }
+    updateHostAttributes(element, attrs) {
+        for (var attrName in this.hostMeta.attributes) {
+            if (!attrs.hasOwnProperty(attrName)) {
+                element.attr(camelToDash(attrName), this.hostMeta.attributes[attrName]);
+            }
+        }
+    }
     /**
      * Invoked before link is invoked (or link returned from a compile block)
      * This is a virtual place where a directive defines new instances of itself... (via scope/controller)
@@ -297,6 +303,7 @@ class DirectiveInstance {
                 scope.$apply(callback);
             });
         }
+        this.updateHostAttributes(iElement, iAttrs);
         // remove the first controller if we forced it by adding it the require list...
         if (this.isControllerExists) {
             if (controller.length === 1)

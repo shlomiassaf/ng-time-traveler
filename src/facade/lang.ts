@@ -36,6 +36,13 @@ export  function stringify(token): string {
 
 
 /* NOT IN GITHUB REPO */
+
+// couldnt find it in ng1...
+export function camelToDash(str) {
+    return str.replace(/\W+/g, '-')
+        .replace(/([a-z\d])([A-Z])/g, '$1-$2');
+}
+
 export interface StringMap<T extends string, Z> {
     [index: string]: Z;
 }

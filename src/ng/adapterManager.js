@@ -7,9 +7,9 @@ var adapters = {};
  */
 export var AnnotationType;
 (function (AnnotationType) {
-    AnnotationType[AnnotationType["Directive"] = 1] = "Directive";
-    AnnotationType[AnnotationType["Component"] = 2] = "Component";
-    AnnotationType[AnnotationType["View"] = 4] = "View";
+    AnnotationType[AnnotationType["DirectiveMetadata"] = 1] = "DirectiveMetadata";
+    AnnotationType[AnnotationType["ComponentMetadata"] = 2] = "ComponentMetadata";
+    AnnotationType[AnnotationType["ViewMetadata"] = 4] = "ViewMetadata";
 })(AnnotationType || (AnnotationType = {}));
 /**
  * Types of UI components angularJS provides.
@@ -105,7 +105,7 @@ export class RegisterInstruction {
     }
     get directive() {
         if (!this._cache.hasOwnProperty('Directive')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.Directive]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.DirectiveMetadata]);
             if (value) {
                 this._cache.Directive = value;
             }
@@ -117,7 +117,7 @@ export class RegisterInstruction {
     }
     get component() {
         if (!this._cache.hasOwnProperty('Component')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.Component]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.ComponentMetadata]);
             if (value) {
                 this._cache.Component = value;
             }
@@ -129,7 +129,7 @@ export class RegisterInstruction {
     }
     get view() {
         if (!this._cache.hasOwnProperty('View')) {
-            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.View]);
+            var value = findAnnotation(this.annotations, AnnotationType[AnnotationType.ViewMetadata]);
             if (value) {
                 this._cache.View = value;
             }

@@ -23,6 +23,12 @@ export function stringify(token) {
     var newLineIndex = res.indexOf("\n");
     return (newLineIndex === -1) ? res : res.substring(0, newLineIndex);
 }
+/* NOT IN GITHUB REPO */
+// couldnt find it in ng1...
+export function camelToDash(str) {
+    return str.replace(/\W+/g, '-')
+        .replace(/([a-z\d])([A-Z])/g, '$1-$2');
+}
 /**
  * Returns the class name of an instance, or the class name if the type (constructor function) is provided.
  * @param clsOrObj
