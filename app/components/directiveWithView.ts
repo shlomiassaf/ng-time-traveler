@@ -7,7 +7,7 @@ import {View, Component, Directive, config} from "../../src/ngtt";
     selector: 'viewMore',
     host: {
         '(click)': 'onClick($event)',
-        '[prop]': 'prop',
+        '[text]': 'ngTemp',
         '@action': 'Action()',
         'myAttributeNice': 'AttrVal'
     },
@@ -42,17 +42,16 @@ export class ViewMore{
     //    };
     //}
     link(scope, iElement, iAttrs, controller) {
-        scope.name = "Shlomi";
-        scope.onClick = function($event) {
-            alert('okS');
-        }
     }
 }
 
 function viewMoreController($scope) {
+    var self = this;
 
     this.hasScope = ($scope) ? true : false;
+
     this.onClick = function($event) {
+        self.ngTemp = "1422";
         alert('ok');
     }
 }

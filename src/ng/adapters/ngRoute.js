@@ -1,5 +1,5 @@
 /// <reference path="../../../typings/tsd.d.ts" />
-import { getTypeName } from "../../facade/lang";
+import { getTypeName } from "../../ng/util";
 import { BaseAdapter } from "./base";
 export class NgRouteAdapter extends BaseAdapter {
     constructor(inst) {

@@ -1,7 +1,9 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 
 import {IAdapter, RegisterInstruction} from "../adapterManager";
-import {getTypeName, StringMap, camelToDash} from "../../facade/lang";
+import {StringMap, Map, MapWrapper} from "../../facade/collection";
+import {isPresent, isBlank, RegExpWrapper} from "../../facade/lang";
+import {getTypeName, camelToDash} from "../../ng/util";
 import {BaseAdapter} from "./base";
 import {DirectiveMetadata, ComponentMetadata, ViewMetadata} from '../../core/metadata';
 
@@ -11,39 +13,6 @@ export enum LinkingInstructionType {
     post = 4
 }
 
-export enum HostItemType {
-    event,
-    property,
-    attribute,
-    action,
-    invalid
-}
-
-function getHostType(name: string): HostItemType {
-    var result: HostItemType;
-
-    if (!name) {
-        result = HostItemType.invalid;
-    }
-    else {
-        let [first, last] = [name.substr(0, 1), name.substr(name.length-1, 1)];
-        if (first === "@"){
-            result = (name.length > 1) ? HostItemType.action : HostItemType.invalid;
-        }
-        else {
-            if (first === "[" && last === "]") {
-                result = (name.length > 2) ? HostItemType.property : HostItemType.invalid;
-            }
-            else if (first === "(" && last === ")") {
-                result = (name.length > 2) ? HostItemType.event : HostItemType.invalid;
-            }
-            else {
-                result = HostItemType.attribute;
-            }
-        }
-    }
-    return result;
-}
 /**
  * Inspect a linking function and return its location/type
  * Returns an enum flag, 1: linkFn, 2: link->pre, 4: link->post, 6: link->pre+post
@@ -141,13 +110,12 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
     }
 
     /**
-     * A Directive constructor emulator.
-     * Why? Since Directive`s are plain objects (not instances) they are no good for NGTT,
-     * NGTT enforce directives as Classes so they can be instantiated, this is to future proof them for NG2 as much as possible.
-     * To compose a directive per its annotations it must be modified before sent to angular, also angular does not instantiate directives (creating them with new)
-     * Angular is all about DI so it will send some injections, we need to make sure they will get to the Class constructor.
-     * Since its a class and it requires instantiation (new) we need to work around that (there is no "apply" to new XXX()).
-     * Also, while at it, some modifications are made to support complex annotations.
+     * A Directive constructor emulator using a proxy.
+     * Angular 2 is all about classes, this is why NGTT requires a directive to be a class.
+     * Due to DI we cant just create new instance of the directive class, the injections wont pass.
+     * Another thing to note is that NGTT use a DirectiveInstance class on top of the user's directive class.
+     * In OOP terms DirectiveInstance extends User's Directive class, giving DirectiveInstance the ability to control the user's class.
+     * To get this relation done we need a proxy, we can't do it directly on the type DirectiveInstance.
      * @param args
      * @returns {Component}
      * @private
@@ -203,65 +171,32 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
     }
 }
 
-interface IHostMetadata {
-    events?: StringMap<string, string> | any[],
-    coreEvents?: StringMap<string, string> | any[],
-    properties?: StringMap<string, string> | any[],
-    attributes?: StringMap<string, string> | any[],
-    actions?: StringMap<string, string> | any[]
-}
+
 /**
  * A directive DDO owner, manipulates the user directive according to needs.
  * There is one DirectiveInstance per Directive type (DDO).
  */
-class DirectiveInstance implements ng.IDirective{
+class DirectiveInstance implements ng.IDirective {
+    public $injector: ng.auto.IInjectorService;
     public $rootScope: ng.IRootScopeService;
 
     public adapter: DirectiveAdapter;
     public annotation: ComponentMetadata | DirectiveMetadata;
 
-    public hostMeta: IHostMetadata;
-    public host: IHostMetadata;
+    hostListeners: Map<string, string | ng.ICompiledExpression>;
+    hostProperties: Map<string, string>;
+    hostAttributes: Map<string, string>;
+    hostActions: Map<string, string>;
 
     public isControllerExists: boolean;
 
+    // group 1: "property" from "[property]"
+    // group 2: "event" from "(event)"
+    // group 3: "action" from "@action"
+    private static _hostRegExp = /^(?:(?:\[([^\]]+)\])|(?:\(([^\)]+)\))|(?:@(.+)))$/g;
+    // SEE https://github.com/angular/angular/blob/master/modules/angular2/src/render/api.ts#L161
 
-    private populateHostMeta(host: StringMap<string, string>) {
-        if (host) {
-            for (var k in host) {
-                var hostType: HostItemType = getHostType(k);
-                switch (hostType) {
-                    case HostItemType.action:
-                        this.hostMeta.actions[k.substr(1)] = host[k];
-                        break;
-                    case HostItemType.property:
-                        this.hostMeta.properties[k.substr(1, k.length - 2)] = host[k];
-                        break;
-                    case HostItemType.event:
-                        var eName = k.substr(1, k.length - 2);
-                        if (DirectiveAdapter.CORE_DIRECTIVE_EVENTS.indexOf(eName)) {
-                            this.hostMeta.coreEvents[eName] = host[k];
-                        }
-                        else {
-                            this.hostMeta.events[eName] = host[k];
-                        }
 
-                        break;
-                    case HostItemType.attribute:
-                        this.hostMeta.attributes[k] = host[k];
-                        break;
-                }
-            }
-        }
-    }
-
-    private updateHostAttributes(element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
-        for (var attrName in this.hostMeta.attributes) {
-            if (! attrs.hasOwnProperty(attrName) ) {
-                element.attr(camelToDash(attrName), this.hostMeta.attributes[attrName]);
-            }
-        }
-    }
     /**
      * Invoked before link is invoked (or link returned from a compile block)
      * This is a virtual place where a directive defines new instances of itself... (via scope/controller)
@@ -274,29 +209,36 @@ class DirectiveInstance implements ng.IDirective{
 
         var ctx = (this.isControllerExists) ? controller[0] : scope; // if we have a ctrl require is an array for sure.
 
-        for (var v of this.host.coreEvents) {
-            iElement.on(v.eventName, function(event) {
+        //events
+        MapWrapper.forEach(this.hostListeners, (fn: ng.ICompiledExpression, eventName: string) => {
+            iElement.on(eventName, function(event) {
+                //TODO: this is good for CORE_DIRECTIVE_EVENTS, need to add logic for other events.
                 var callback = function() {
-                    v.fn(ctx, {$event:event});
+                    fn(ctx, {$event:event});
                 };
-                if (DirectiveAdapter.CORE_DIRECTIVE_EVENTS_FORCE_ASYNC[v.eventName] && this.$rootScope.$$phase) {
+                if (DirectiveAdapter.CORE_DIRECTIVE_EVENTS_FORCE_ASYNC[eventName] && this.$rootScope.$$phase) {
                     scope.$evalAsync(callback);
                 } else {
-                scope.$apply(callback);
+                    scope.$apply(callback);
                 }
-            });
-        }
+            }.bind(this));
+        });
 
-        for (var v of this.host.events) {
-            iElement.on(v.eventName, function(event) {
-                var callback = function() {
-                    v.fn(ctx, {$event:event}); // TODO: this is not good...
-                };
-                scope.$apply(callback);
+        //attributes
+        MapWrapper.forEach(this.hostProperties, (fn: ng.ICompiledExpression, propName: string) => {
+            scope.$watch(() => fn(ctx), function(newVal, oldVal){
+               if(newVal !== oldVal) {
+                   iElement.prop(propName, newVal);
+               }
             });
-        }
+        });
 
-        this.updateHostAttributes(iElement, iAttrs);
+        //attributes
+        MapWrapper.forEach(this.hostAttributes, (value: string, attrName: string) => {
+            if (! iAttrs.hasOwnProperty(attrName) ) {
+                iElement.attr(camelToDash(attrName), value);
+            }
+        });
 
         // remove the first controller if we forced it by adding it the require list...
         if (this.isControllerExists) {
@@ -313,7 +255,27 @@ class DirectiveInstance implements ng.IDirective{
     }
 
     private parseAnnotations() {
-        this.populateHostMeta(this.annotation.host);
+        this.hostListeners = new Map();
+        this.hostProperties = new Map();
+        this.hostAttributes = new Map();
+        this.hostActions = new Map();
+
+        var $parse = this.$injector.get('$parse');
+        var host = (this.annotation.host) ? MapWrapper.createFromStringMap(this.annotation.host) : null;
+        if (isPresent(host)) {
+            MapWrapper.forEach(host, (value: string, key: string) => {
+                var matches = RegExpWrapper.firstMatch(DirectiveInstance._hostRegExp, key);
+                if (isBlank(matches)) {
+                    this.hostAttributes.set(key, value);
+                } else if (isPresent(matches[1])) {
+                    this.hostProperties.set(matches[1], $parse(value));
+                } else if (isPresent(matches[2])) {
+                    this.hostListeners.set(matches[2], $parse(value));
+                } else if (isPresent(matches[3])) {
+                    this.hostActions.set(matches[3], value);
+                }
+            });
+        }
 
         if (this.isControllerExists && ! this.controllerAs) {
             this.controllerAs = getTypeName(this.adapter.inst.cls);
@@ -321,50 +283,17 @@ class DirectiveInstance implements ng.IDirective{
     }
 
     constructor(public adapter: DirectiveAdapter, args: any[]) {
+
+        this.$injector = angular.injector(['ng']);
+        this.$rootScope = this.$injector.get('$rootScope');
+
         this.annotation = this.adapter.inst.directive || this.adapter.inst.component;
+
         adapter.inst.cls.apply(this, args);
+
         this.isControllerExists = angular.isFunction(this.controller);
 
-        this.hostMeta = {
-            events: {},
-            coreEvents: {},
-            properties: {},
-            attributes: {},
-            actions: {}
-        };
-        this.host = {
-            events: undefined,
-            coreEvents: undefined,
-            properties: undefined,
-            actions: undefined
-        };
-
-
         this.parseAnnotations();
-
-        var $injector: ng.auto.IInjectorService = angular.injector(['ng']);
-        var $parse: ng.IParseService = $injector.get('$parse');
-        this.$rootScope = $injector.get('$rootScope');
-
-        this.host.coreEvents = [];
-        for (var k in this.hostMeta.coreEvents) {
-            this.host.coreEvents.push(
-                {
-                    eventName: k,
-                    fn: $parse(this.hostMeta.coreEvents[k], /* interceptorFn */ null, /* expensiveChecks */ true)
-                }
-            );
-        }
-
-        this.host.events = [];
-        for (var k in this.hostMeta.events) {
-            this.host.events.push(
-                {
-                    eventName: k,
-                    fn: $parse(this.hostMeta.events[k], /* interceptorFn */ null, /* expensiveChecks */ true)
-                }
-            );
-        }
 
         if (this.isControllerExists) {
 

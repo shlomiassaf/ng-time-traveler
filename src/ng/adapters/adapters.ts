@@ -1,7 +1,7 @@
 
 
 import {IAdapter, RegisterInstruction} from "../adapterManager";
-import {getTypeName} from "../../facade/lang";
+import {getTypeName} from "../../ng/util";
 import {BaseAdapter} from "./base";
 
 export class ControllerAdapter extends BaseAdapter implements IAdapter{

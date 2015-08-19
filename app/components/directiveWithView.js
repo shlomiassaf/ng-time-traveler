@@ -28,10 +28,6 @@ export let ViewMore = class {
     //    };
     //}
     link(scope, iElement, iAttrs, controller) {
-        scope.name = "Shlomi";
-        scope.onClick = function ($event) {
-            alert('okS');
-        };
     }
 };
 ViewMore.$inject = [];
@@ -40,7 +36,7 @@ ViewMore = __decorate([
         selector: 'viewMore',
         host: {
             '(click)': 'onClick($event)',
-            '[prop]': 'prop',
+            '[text]': 'ngTemp',
             '@action': 'Action()',
             'myAttributeNice': 'AttrVal'
         },
@@ -54,8 +50,10 @@ ViewMore = __decorate([
     __metadata('design:paramtypes', [])
 ], ViewMore);
 function viewMoreController($scope) {
+    var self = this;
     this.hasScope = ($scope) ? true : false;
     this.onClick = function ($event) {
+        self.ngTemp = "1422";
         alert('ok');
     };
 }

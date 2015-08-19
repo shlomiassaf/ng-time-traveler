@@ -1,7 +1,7 @@
 /// <reference path="../../../typings/tsd.d.ts" />
 
 import {IAdapter, RegisterInstruction} from "../adapterManager";
-import {getTypeName} from "../../facade/lang";
+import {getTypeName} from "../../ng/util";
 import {BaseAdapter} from "./base";
 import {DirectiveMetadata, ViewMetadata} from '../../core/metadata';
 

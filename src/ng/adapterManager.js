@@ -1,6 +1,6 @@
 import { hasModule, notifyOnNewModule } from '../ngDecorator';
 import * as config from '../ng/config';
-import { getTypeName } from "../facade/lang";
+import { getTypeName } from "../ng/util";
 var adapters = {};
 /**
  * Types of annotations angular2 provides.

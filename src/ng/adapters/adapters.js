@@ -1,4 +1,4 @@
-import { getTypeName } from "../../facade/lang";
+import { getTypeName } from "../../ng/util";
 import { BaseAdapter } from "./base";
 export class ControllerAdapter extends BaseAdapter {
     register() {

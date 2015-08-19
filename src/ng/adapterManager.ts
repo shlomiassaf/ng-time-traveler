@@ -2,7 +2,7 @@
 import {hasModule, INewAngularModuleNotifier, notifyOnNewModule} from '../ngDecorator';
 import {DirectiveMetadata, ComponentMetadata, ViewMetadata, INgttAnnotationMeta} from '../core/metadata';
 import * as config from '../ng/config';
-import {getTypeName} from "../facade/lang";
+import {getTypeName} from "../ng/util";
 
 interface IAdapterDictionary {
     [index: string]: IAdapterStatic;
