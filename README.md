@@ -172,7 +172,7 @@ the login within `ComponentLikeController`.
   - More...
   
 
-> This is a first attempt, code transpiles on the browser for now, now ES5 output build yet.
+> This is a first attempt, code transpiles on the browser for now, NO ES5 output build yet.
 
 ## Install:
   - Clone repo.
