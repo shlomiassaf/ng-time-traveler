@@ -16,7 +16,7 @@ import {View, Component, Directive, config} from "../../src/ngtt";
     }
 })
 @View({
-    template: "<span>Hello Directive{{name}}</span>"
+    template: "<span>Hello Directive {{ctrl123.name}}</span>"
 })
 export class ViewMore{
     static $inject = [];
@@ -36,11 +36,6 @@ export class ViewMore{
 
     bindToController = true;
 
-    //compile() {
-    //    return {
-    //        post: function() {}
-    //    };
-    //}
     link(scope, iElement, iAttrs, controller) {
     }
 }

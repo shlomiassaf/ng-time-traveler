@@ -10,7 +10,7 @@
 <body>
 <div ng-app="myApp">
     <h1>Sanity: 1 + 1 = {{1+1}}</h1>
-    <a href="#/hello">click</a>
+    <a href="#/hello">Click ME!!!</a>
     <view-less></view-less>
     <ng-view></ng-view>
 </div>
@@ -34,8 +34,6 @@
             .then(function() {
                 return System.import('src/ngtt');
             })
-
-//    System.import('src/ngtt')
             .then(function() {
                 return System.import('app/app');
             })

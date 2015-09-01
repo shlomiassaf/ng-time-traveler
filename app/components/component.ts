@@ -12,14 +12,17 @@ import {View, Component, Directive, config} from "../../src/ngtt";
     }
 })
 @View({
-    template: "<h1>Hello {{ctrl.name}}</h1><view-more name='ctrl.name'></view-more><view-more name='ctrl.nameTwo'></view-more>"
+    template: `
+    <h1>Hello {{ctrl.name}}</h1>
+    <view-more name='ctrl.name'></view-more> <-- click to test event binding<br />
+    <view-more name='ctrl.nameTwo'></view-more>`
 })
 export class SomeCtrl{
     name: string;
     nameTwo: string;
     static $inject = [];
     constructor() {
-        this.name = "Shlomi";
-        this.nameTwo = "Shira";
+        this.name = "Angular 1";
+        this.nameTwo = "Angular 2";
     }
 }
