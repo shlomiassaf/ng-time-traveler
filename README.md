@@ -43,7 +43,7 @@ See examples for more control options.
 
 ```
 'use strict';
-import {config} from ...;
+import {config} from 'ngtt';
 
 // notify ngtt of the ng-app name, this is a global instruction, you can set it per directive/component as well.
 config.ngApp = "myApp-With-A-TypeO";
@@ -56,7 +56,7 @@ angular.module('myApp', ['ngRoute']);
 ### A page (controller/template in ng-route) in the app:
 ```
 'use strict';
-import {View, Component, Directive, config} from ...;
+import {View, Component, Directive, config} from 'ngtt';
 
 @Component({
     selector: '', // must omit or empty
@@ -83,7 +83,7 @@ export class HellowWorldController{
 ### A templateless directive
 ```
 'use strict';
-import {View, Component, Directive, config} from ...;
+import {View, Component, Directive, config} from 'ngtt';
 
 @Directive({
     selector: 'simpleDirective' // use simple-directive in html markup to invoke this directive.
@@ -104,7 +104,7 @@ export class ViewLess{
 ### A directive with a template
 ``` 
 'use strict';
-import {View, Component, Directive, config} from ...;
+import {View, Component, Directive, config} from 'ngtt';
 
 @Component({
     selector: 'myDirective',
