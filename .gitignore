@@ -3,6 +3,7 @@ logs/*
 node_modules/
 app/bower_components/
 jspm_packages/
+dist/
 tmp
 .DS_Store
 .idea

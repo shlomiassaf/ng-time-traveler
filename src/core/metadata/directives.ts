@@ -1,7 +1,7 @@
 
 /* SEE: https://github.com/angular/angular/blob/master/modules/angular2/src/core/annotations_impl/annotations.ts */
 
-import {ABSTRACT, CONST, Type, global, StringMap} from '../../facade/lang';
+import {ABSTRACT, CONST, Type, global} from '../../facade/lang';
 
 
 /**

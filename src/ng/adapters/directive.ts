@@ -177,14 +177,32 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
  * There is one DirectiveInstance per Directive type (DDO).
  */
 class DirectiveInstance implements ng.IDirective {
+
+    // DDO
+    compile: ng.IDirectiveCompileFn;
+    controller: any;
+    controllerAs: string;
+    bindToController: boolean|Object;
+    link: ng.IDirectiveLinkFn | ng.IDirectivePrePost;
+    name: string;
+    priority: number;
+    replace: boolean;
+    require: any;
+    restrict: string;
+    scope: any;
+    template: any;
+    templateUrl: any;
+    terminal: boolean;
+    transclude: any;
+    // DDO End
+
     public $injector: ng.auto.IInjectorService;
     public $rootScope: ng.IRootScopeService;
 
-    public adapter: DirectiveAdapter;
     public annotation: ComponentMetadata | DirectiveMetadata;
 
     hostListeners: Map<string, string | ng.ICompiledExpression>;
-    hostProperties: Map<string, string>;
+    hostProperties: Map<string, string | ng.ICompiledExpression>;
     hostAttributes: Map<string, string>;
     hostActions: Map<string, string>;
 
@@ -248,7 +266,7 @@ class DirectiveInstance implements ng.IDirective {
                 controller.splice(0, 1);
             }
         }
-        var ret = [scope, iElement, iAttrs];
+        var ret: any[] = [scope, iElement, iAttrs];
         controller && ret.push(controller);
         transclude && ret.push(transclude)
         return ret;
@@ -260,7 +278,7 @@ class DirectiveInstance implements ng.IDirective {
         this.hostAttributes = new Map();
         this.hostActions = new Map();
 
-        var $parse = this.$injector.get('$parse');
+        var $parse = this.$injector.get<ng.IParseService>('$parse');
         var host = (this.annotation.host) ? MapWrapper.createFromStringMap(this.annotation.host) : null;
         if (isPresent(host)) {
             MapWrapper.forEach(host, (value: string, key: string) => {
@@ -285,7 +303,7 @@ class DirectiveInstance implements ng.IDirective {
     constructor(public adapter: DirectiveAdapter, args: any[]) {
 
         this.$injector = angular.injector(['ng']);
-        this.$rootScope = this.$injector.get('$rootScope');
+        this.$rootScope = this.$injector.get<ng.IRootScopeService>('$rootScope');
 
         this.annotation = this.adapter.inst.directive || this.adapter.inst.component;
 

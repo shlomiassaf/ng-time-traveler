@@ -18,31 +18,11 @@
 
 <script src="app/bower_components/angular/angular.js"></script>
 <script src="app/bower_components/angular-route/angular-route.js"></script>
+<script src="dist/es5.js"></script>
 
-
-<script src="/jspm_packages/system.src.js"></script>
-<script src="config.js"></script>
-<!--<script src="/build.js"></script>-->
 
 <script>
-    // we will call system.import for angular app, this is async...
-    // we need to tell angular when it is done.
-    window.name = 'NG_DEFER_BOOTSTRAP!';
 
-
-    System.import('reflect-metadata')
-            .then(function() {
-                return System.import('src/ngtt');
-            })
-            .then(function() {
-                return System.import('app/app');
-            })
-            .then(function() {
-                angular.resumeBootstrap();
-            })
-            .catch(function(e) {
-                console.error(e);
-            });
 
 </script>
 

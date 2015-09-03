@@ -1,3 +1,4 @@
+/// <reference path="../../typings/tsd.d.ts" />
 export { ViewMetadata } from './metadata/view';
 export { ComponentMetadata, DirectiveMetadata } from './metadata/directives';
 import { ComponentMetadata, DirectiveMetadata } from './metadata/directives';

@@ -1,6 +1,21 @@
 /// <reference path="../../typings/tsd.d.ts" />
-/* SEE: https://github.com/angular/angular/blob/master/modules/angular2/src/facade/lang.ts */
-var _global = (typeof window === 'undefined' ? global : window);
+var globalScope;
+if (typeof window === 'undefined') {
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+        // TODO: Replace any with WorkerGlobalScope from lib.webworker.d.ts #3492
+        globalScope = self;
+    }
+    else {
+        globalScope = global;
+    }
+}
+else {
+    globalScope = window;
+}
+;
+// Need to declare a new variable for global here since TypeScript
+// exports the original value of the symbol.
+var _global = globalScope;
 export { _global as global };
 export var Type = Function;
 export function getTypeNameForDebugging(type) {
