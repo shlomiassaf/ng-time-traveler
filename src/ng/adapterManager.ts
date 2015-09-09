@@ -226,6 +226,8 @@ export class Mgr implements INewAngularModuleNotifier{
     }
 
     register(inst: RegisterInstruction) {
+
+
         if (!inst.legacyViewType) {
             /*  TODO: save in a list, after angular is finished loading, display it.
              this is because we run register for every annotation.

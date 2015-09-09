@@ -1,4 +1,4 @@
-
+/// <reference path="../../../typings/tsd.d.ts" />
 /* SEE: https://github.com/angular/angular/blob/master/modules/angular2/src/core/annotations_impl/annotations.ts */
 
 import {ABSTRACT, CONST, Type, global} from '../../facade/lang';
@@ -31,7 +31,6 @@ export class NgttAnnotation {
     }
 }
 
-@CONST()
 export class DirectiveMetadata extends NgttAnnotation{
     selector: string;
     host: StringMap<string, string>;
@@ -47,7 +46,6 @@ export class DirectiveMetadata extends NgttAnnotation{
     }
 }
 
-@CONST()
 export class ComponentMetadata extends DirectiveMetadata {
     constructor({selector, host, _ngtt}: {
         selector?: string,
@@ -61,3 +59,4 @@ export class ComponentMetadata extends DirectiveMetadata {
         });
     }
 }
+

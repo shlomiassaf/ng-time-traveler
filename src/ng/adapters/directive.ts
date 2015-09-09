@@ -132,9 +132,15 @@ export class DirectiveAdapter extends BaseAdapter implements IAdapter{
             DirectiveInstance.apply(this, [adapter, args]);
         }
         extend(DirectiveInstanceProxy, this.inst.cls);
-        for (var k in DirectiveInstance.prototype) {
-            DirectiveInstanceProxy.prototype[k] = DirectiveInstance.prototype[k];
+
+        var keys = Object.getOwnPropertyNames(DirectiveInstance.prototype);
+        for (var k in keys) {
+            DirectiveInstanceProxy.prototype[keys[k]] = DirectiveInstance.prototype[keys[k]];
         }
+        // for of,
+        //for (var k of Object.getOwnPropertyNames(DirectiveInstance.prototype)) {
+        //    DirectiveInstanceProxy.prototype[k] = DirectiveInstance.prototype[k];
+        //}
 
         return new DirectiveInstanceProxy(this, args); // typeof is DirectiveAdapter
     }

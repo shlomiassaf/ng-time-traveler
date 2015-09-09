@@ -1,7 +1,12 @@
 /// <reference path="../../typings/tsd.d.ts" />
 
-export {ViewMetadata} from './metadata/view';
+//export {ViewMetadata} from './metadata/view';
 
+import {
+    INgttAnnotationMeta,
+    ComponentMetadata,
+    DirectiveMetadata,
+} from './metadata/directives';
 export {
     INgttAnnotationMeta,
     INgRouteMeta,
@@ -9,14 +14,10 @@ export {
     DirectiveMetadata
 } from './metadata/directives';
 
-import {
-    INgttAnnotationMeta,
-    ComponentMetadata,
-    DirectiveMetadata,
-} from './metadata/directives';
 
 
 import {ViewMetadata} from './metadata/view';
+export {ViewMetadata} from './metadata/view';
 
 import {makeDecorator, makeParamDecorator, TypeDecorator, Class} from '../util/decorators';
 import {Type} from '../facade/lang';

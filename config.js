@@ -3,7 +3,7 @@ System.config({
   defaultJSExtensions: true,
   transpiler: "typescript",
   paths: {
-    "app": "app",
+    "app/app": "demo/es6/app/app",
     "src": "src",
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
@@ -20,7 +20,7 @@ System.config({
 
   map: {
     "core-js": "npm:core-js@0.9.18",
-    "reflect-metadata": "npm:reflect-metadata@0.1.0",
+    "reflect-metadata": "npm:reflect-metadata@0.1.1",
     "typescript": "npm:typescript@1.5.3",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"
@@ -62,8 +62,9 @@ System.config({
     "npm:path-browserify@0.0.0": {
       "process": "github:jspm/nodelibs-process@0.1.1"
     },
-    "npm:reflect-metadata@0.1.0": {
-      "assert": "github:jspm/nodelibs-assert@0.1.0"
+    "npm:reflect-metadata@0.1.1": {
+      "assert": "github:jspm/nodelibs-assert@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.1"
     },
     "npm:typescript@1.5.3": {
       "buffer": "github:jspm/nodelibs-buffer@0.1.0",
