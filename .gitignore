@@ -4,6 +4,10 @@ node_modules/
 app/bower_components/
 jspm_packages/
 dist/
+src/**/*.js
+src/*.js
+src/**/*.js.map
+src/*.js.map
 tmp
 .DS_Store
 .idea
