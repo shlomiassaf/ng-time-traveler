@@ -182,7 +182,7 @@ the login within `ComponentLikeController`.
 
 ## Run:
   - `npm start`
-  - `gulp build` (creates ES5 & ES5 builds)
+  - `gulp build` (creates ES5 & ES6 builds)
   - browse to: http://localhost:55000/
 
 ## Repo structure:
