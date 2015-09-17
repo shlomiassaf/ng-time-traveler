@@ -10,10 +10,10 @@ System.config({
   },
 
   packages: {
-    "src": {
+    "src/ngtt": {
       "defaultExtension": "ts"
     },
-    "app": {
+    "app/app": {
       "defaultExtension": "ts"
     }
   },
