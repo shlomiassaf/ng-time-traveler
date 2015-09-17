@@ -2,7 +2,6 @@ logs/*
 !.gitkeep
 node_modules/
 app/bower_components/
-jspm_packages/
 dist/
 src/**/*.js
 src/*.js
