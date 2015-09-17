@@ -18,7 +18,8 @@ import {View, Component, Directive, config} from "../../../../src/ngtt";
 @View({
     template: "<span>Hello Directive {{ctrl123.name}}</span>"
 })
-export class ViewMore{
+export class ViewMore {
+
     static $inject = [];
 
     restrict: string = 'EA';
@@ -40,6 +41,7 @@ export class ViewMore{
     }
 }
 
+//$scope, $element, $attrs, $transclude,
 function viewMoreController($scope) {
     var self = this;
 

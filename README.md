@@ -161,9 +161,9 @@ the login within `ComponentLikeController`.
 
 ## TODO:
   - Check performance
-  - Explore supporting property & events for @Component
+  - ~~Explore supporting property & events for @Component~~
   - Test that ES5 is working (ES5 DSL & ES5 annotation)
-  - Create demo app in ES5
+  - ~~Create demo app in ES5~~
   - Support events other then core directive events.
   - refactor `index.html`
   - refactor package.json (a lot of garbage)

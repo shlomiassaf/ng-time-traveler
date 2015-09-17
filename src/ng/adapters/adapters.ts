@@ -1,4 +1,4 @@
-
+/// <reference path="../../../typings/tsd.d.ts" />
 
 import {IAdapter, RegisterInstruction} from "../adapterManager";
 import {getTypeName} from "../../ng/util";
