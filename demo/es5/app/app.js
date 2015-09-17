@@ -44,3 +44,16 @@ AppDirective.annotations = [
     })
 ];
 ngtt.register(AppDirective);
+
+function stam() {
+    return {
+        template: '<h2>STAM!!!</h2>',
+        restrict: 'EA',
+        controller: ['$scope', '$element', '$attrs', '$transclude', '$http', function ($scope, $element, $attrs, $transclude) {
+            console.log(arguments[4]);
+        }]
+
+    }
+}
+
+angular.module('myApp').directive('stam', stam);
