@@ -1,6 +1,6 @@
 System.config({
   baseURL: "/",
-  defaultJSExtensions: true,
+  defaultJSExtensions: false,
   transpiler: "typescript",
   paths: {
     "app/app": "ng-time-traveler/demo/es6/app/app",
