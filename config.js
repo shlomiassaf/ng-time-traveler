@@ -3,17 +3,17 @@ System.config({
   defaultJSExtensions: true,
   transpiler: "typescript",
   paths: {
-    "app/app": "ng-time-traveler/demo/es6/app/app.ts",
-    "src/ngtt": "ng-time-traveler/src/ngtt.ts",
+    "app": "ng-time-traveler/demo/es6/app/app",
+    "ngtt": "ng-time-traveler/src/ngtt",
     "github:*": "ng-time-traveler/jspm_packages/github/*",
     "npm:*": "ng-time-traveler/jspm_packages/npm/*"
   },
 
   packages: {
-    "src/ngtt": {
+    "ngtt": {
       "defaultExtension": "ts"
     },
-    "app/app": {
+    "app": {
       "defaultExtension": "ts"
     }
   },
