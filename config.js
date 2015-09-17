@@ -5,8 +5,8 @@ System.config({
   paths: {
     "app": "ng-time-traveler/demo/es6/app/app",
     "ngtt": "ng-time-traveler/src/ngtt",
-    "github:*": "ng-time-traveler/jspm_packages/github/*",
-    "npm:*": "ng-time-traveler/jspm_packages/npm/*"
+    "github:*": "jspm_packages/github/*",
+    "npm:*": "jspm_packages/npm/*"
   },
 
   packages: {
