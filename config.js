@@ -3,8 +3,8 @@ System.config({
   defaultJSExtensions: true,
   transpiler: "typescript",
   paths: {
-    "app/app": "demo/es6/app/app",
-    "src": "src",
+    "app/app": "ng-time-traveler/demo/es6/app/app",
+    "src": "ng-time-traveler/src/src",
     "github:*": "ng-time-traveler/jspm_packages/github/*",
     "npm:*": "ng-time-traveler/jspm_packages/npm/*"
   },
