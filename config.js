@@ -1,10 +1,10 @@
 System.config({
   baseURL: "/",
-  defaultJSExtensions: false,
+  defaultJSExtensions: true,
   transpiler: "typescript",
   paths: {
-    "app/app": "ng-time-traveler/demo/es6/app/app",
-    "src/ngtt": "ng-time-traveler/src/ngtt",
+    "app/app": "ng-time-traveler/demo/es6/app/app.ts",
+    "src/ngtt": "ng-time-traveler/src/ngtt.ts",
     "github:*": "ng-time-traveler/jspm_packages/github/*",
     "npm:*": "ng-time-traveler/jspm_packages/npm/*"
   },
