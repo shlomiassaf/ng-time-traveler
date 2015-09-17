@@ -8,25 +8,23 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
         case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
     }
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { Directive } from "../../../../src/ngtt";
-export let ViewLess = class {
-    constructor() {
+var ngtt_1 = require("../../../../src/ngtt");
+var ViewLess = (function () {
+    function ViewLess() {
         this.restrict = 'EA';
     }
-    link(scope, iElement, iAttrs, controller) {
-        iElement.html('<h1>Hi :)</h1>');
-    }
-};
-ViewLess = __decorate([
-    Directive({
-        selector: 'viewLess',
-        _ngtt: {
-            ngApp: "myApp"
-        }
-    }), 
-    __metadata('design:paramtypes', [])
-], ViewLess);
+    ViewLess.prototype.link = function (scope, iElement, iAttrs, controller) {
+        iElement.html('<h4>Hi, im a simple directive without any view, this content is added at runtime.:)</h4>');
+    };
+    ViewLess = __decorate([
+        ngtt_1.Directive({
+            selector: 'viewLess',
+            _ngtt: {
+                ngApp: "myApp"
+            }
+        })
+    ], ViewLess);
+    return ViewLess;
+})();
+exports.ViewLess = ViewLess;
 //# sourceMappingURL=directive.js.map

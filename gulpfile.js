@@ -9,7 +9,8 @@ var concat = require('gulp-concat');
 var config = {
     es6Src: ['src/**/*.ts'],
     es6Dest: './dist/es6',
-    es5Dest: './dist/es5'
+    es5Dest: './dist/es5',
+    es6Demo: './demo/es6'
 };
 
 function sequenceComplete(done) {
@@ -101,6 +102,33 @@ gulp.task('!build-es6', ['!build-clean-es6'], function() {
     return stream;
 });
 
+gulp.task('build-es6-demo', [], function() {
+    var stream = gulp.src(config.es6Demo)
+        .pipe(sourcemaps.init())
+        .pipe(tsc({
+            allowNonTsExtensions: false,
+            declaration: false,
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
+            mapRoot: '',  // force sourcemaps to use relative path
+            noEmitOnError: false,
+            rootDir: '.',
+            target: 'ES6',
+            typescript: require('typescript')
+        }))
+        .on('error', function(error) {
+            // nodejs doesn't propagate errors from the src stream into the final stream so we are
+            // forwarding the error into the final stream
+            stream.emit('error', error);
+        })
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest(config.es6Demo))
+        .on('end', function() {
+
+        });
+
+    return stream;
+});
 function build_es5(src, dest, buildConfig) {
     var Builder = require('systemjs-builder');
     var builder = new Builder();

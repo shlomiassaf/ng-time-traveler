@@ -7,34 +7,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
         case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
     }
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { View, Component } from "../../../../src/ngtt";
-export let SomeCtrl = class {
-    constructor() {
-        this.name = "Angular 1";
-        this.nameTwo = "Angular 2";
+var ngtt_1 = require("../../../../src/ngtt");
+var MyHomePage = (function () {
+    function MyHomePage() {
+        this.bind1 = "Angular 1";
+        this.bind2 = "Angular 2";
     }
-};
-SomeCtrl.$inject = [];
-SomeCtrl = __decorate([
-    Component({
-        selector: '',
-        _ngtt: {
-            ngApp: "myApp",
-            ngRoute: {
-                path: '/hello',
-                controllerAs: "ctrl"
+    MyHomePage.$inject = [];
+    MyHomePage = __decorate([
+        ngtt_1.Component({
+            selector: '',
+            _ngtt: {
+                ngApp: "myApp",
+                ngRoute: {
+                    path: '/hello',
+                    controllerAs: "ctrl"
+                }
             }
-        }
-    }),
-    View({
-        template: `
-    <h1>Hello {{ctrl.name}}</h1>
-    <view-more name='ctrl.name'></view-more> <-- click to test event binding<br />
-    <view-more name='ctrl.nameTwo'></view-more>`
-    }), 
-    __metadata('design:paramtypes', [])
-], SomeCtrl);
+        }),
+        ngtt_1.View({
+            template: "\n    <h1>Hello {{ctrl.bind1}} and {{ctrl.bind2}}</h1>\n    <p>This is an NG1 controller registered automatically simply by adding NG2 style metadata to it.</p>\n    <h3>We can also include directive with the same approach and attach host events/properties to it!</h3>\n    <view-more name='ctrl.bind1'></view-more> <-- <b>click to test event binding</b><br /></br>\n    F12 and look at the direvtive, it should also have an attribute <b>my-attribute-nice</b> with a value.\n    "
+        })
+    ], MyHomePage);
+    return MyHomePage;
+})();
+exports.MyHomePage = MyHomePage;
 //# sourceMappingURL=component.js.map

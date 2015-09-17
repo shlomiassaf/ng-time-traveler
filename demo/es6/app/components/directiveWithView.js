@@ -8,12 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
         case 4: return decorators.reduceRight(function(o, d) { return (d && d(target, key, o)) || o; }, desc);
     }
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-import { View, Component } from "../../../../src/ngtt";
-export let ViewMore = class {
-    constructor() {
+var ngtt_1 = require("../../../../src/ngtt");
+var ViewMore = (function () {
+    function ViewMore() {
         this.restrict = 'EA';
         this.controllerAs = "ctrl123";
         this.controller = viewMoreController;
@@ -22,28 +19,30 @@ export let ViewMore = class {
         };
         this.bindToController = true;
     }
-    link(scope, iElement, iAttrs, controller) {
-    }
-};
-ViewMore.$inject = [];
-ViewMore = __decorate([
-    Component({
-        selector: 'viewMore',
-        host: {
-            '(click)': 'onClick($event)',
-            '[text]': 'ngTemp',
-            '@action': 'Action()',
-            'myAttributeNice': 'AttrVal'
-        },
-        _ngtt: {
-            ngApp: "myApp"
-        }
-    }),
-    View({
-        template: "<span>Hello Directive {{ctrl123.name}}</span>"
-    }), 
-    __metadata('design:paramtypes', [])
-], ViewMore);
+    ViewMore.prototype.link = function (scope, iElement, iAttrs, controller) {
+    };
+    ViewMore.$inject = [];
+    ViewMore = __decorate([
+        ngtt_1.Component({
+            selector: 'viewMore',
+            host: {
+                '(click)': 'onClick($event)',
+                '[text]': 'ngTemp',
+                '@action': 'Action()',
+                'myAttributeNice': 'AttrVal'
+            },
+            _ngtt: {
+                ngApp: "myApp"
+            }
+        }),
+        ngtt_1.View({
+            template: "<span>Hello Directive {{ctrl123.name}}</span>"
+        })
+    ], ViewMore);
+    return ViewMore;
+})();
+exports.ViewMore = ViewMore;
+//$scope, $element, $attrs, $transclude,
 function viewMoreController($scope) {
     var self = this;
     this.hasScope = ($scope) ? true : false;

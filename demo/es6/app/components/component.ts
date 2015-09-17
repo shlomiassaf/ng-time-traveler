@@ -13,16 +13,19 @@ import {View, Component, Directive, config} from "../../../../src/ngtt";
 })
 @View({
     template: `
-    <h1>Hello {{ctrl.name}}</h1>
-    <view-more name='ctrl.name'></view-more> <-- click to test event binding<br />
-    <view-more name='ctrl.nameTwo'></view-more>`
+    <h1>Hello {{ctrl.bind1}} and {{ctrl.bind2}}</h1>
+    <p>This is an NG1 controller registered automatically simply by adding NG2 style metadata to it.</p>
+    <h3>We can also include directive with the same approach and attach host events/properties to it!</h3>
+    <view-more name='ctrl.bind1'></view-more> <-- <b>click to test event binding</b><br /></br>
+    F12 and look at the direvtive, it should also have an attribute <b>my-attribute-nice</b> with a value.
+    `
 })
-export class SomeCtrl{
-    name: string;
-    nameTwo: string;
+export class MyHomePage{
+    bind1: string;
+    bind2: string;
     static $inject = [];
     constructor() {
-        this.name = "Angular 1";
-        this.nameTwo = "Angular 2";
+        this.bind1 = "Angular 1";
+        this.bind2 = "Angular 2";
     }
 }
