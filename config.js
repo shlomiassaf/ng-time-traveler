@@ -4,7 +4,7 @@ System.config({
   transpiler: "typescript",
   paths: {
     "app/app": "ng-time-traveler/demo/es6/app/app",
-    "src": "ng-time-traveler/src/src",
+    "src/ngtt": "ng-time-traveler/src/ngtt",
     "github:*": "ng-time-traveler/jspm_packages/github/*",
     "npm:*": "ng-time-traveler/jspm_packages/npm/*"
   },
